@@ -16,14 +16,14 @@ runSearch xs = runSearch' 0 0 Map.empty xs
     where
         runSearch' _ termN _ [] = putStrLn $ "\rRan out of terms at term " ++ show termN ++ ", stopping search."
         runSearch' i termN m (x:xs) =
-            let newMap = Map.insertWith const x termN m in
-            case Map.lookup i m of
+            let newMap = if x >= i then Map.insertWith const x termN m else m in
+            case Map.lookup i newMap of
                 Nothing -> do
                     putStr $ "\rSearching for " ++ show i ++ ", term " ++ show termN
                     runSearch' i (termN + 1) newMap xs
                 Just v -> do
                     putStrLn $ "\rFound " ++ show i ++ ", term " ++ show v ++ "                         "
-                    runSearch' (i + 1) (termN + 1) newMap xs
+                    runSearch' (i + 1) (termN + 1) (Map.delete i newMap) xs
 
 findAll values xs = findAll' values xs 0
     where
